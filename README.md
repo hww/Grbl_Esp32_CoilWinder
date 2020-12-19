@@ -12,8 +12,6 @@ The _coilgen_ folder cotains a python script for generating gcode from a coil's 
 
 ### Project Overview
 
-<img src="https://user-images.githubusercontent.com/189677/93836185-74c27500-fc47-11ea-8bed-5d419974c196.jpg" width="300">
-
 Grbl_ESP32 started as a port of [Grbl](https://github.com/gnea/grbl) to the ESP32. The power of the ESP32 has allowed this firmware to grow far beyond the limitations of 8-bit AVR controllers. Here are some of the current features
 
 - **Motors**
