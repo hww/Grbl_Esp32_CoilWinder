@@ -54,6 +54,187 @@ EspClass esp;
 #endif
 const int DEFAULTBUFFERSIZE = 64;
 
+#define SSD1306
+#ifdef SSD1306
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define CHAR_W 8
+#define CHAR_H 8
+#define XCHAR2PIX(n) (CHAR_W*n)
+#define YCHAR2PIX(n) (CHAR_H*n)
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+#define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+static bool is_ssd1306_initialized = false;
+
+void grbl_display_init() {
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+    display.clearDisplay();
+    display.setTextSize(1); // Draw 2X-scale text
+    display.display();
+    is_ssd1306_initialized = true;
+}
+
+String getValue(String data, char separator, int index)
+{
+    int found = 0;
+    int strIndex[] = { 0, -1  };
+    int maxIndex = data.length()-1;
+    for(int i=0; i<=maxIndex && found<=index; i++){
+        if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+static String machinepos_x;
+static String machinepos_y;
+static String workingpos_x;
+static String workingpos_y;
+static String lcd_comment;
+// Display format below
+// +----------------------------+
+// | STATUS                     | 
+// | MPosX        MPosY         | 
+// | WPosX        WPosY         |
+// | Comment .............      |
+// .                            .
+void grbl_parse_status_line(String line)
+{
+    // <Idle|MPos:5.529,0.560|WPos:1.529,-5.440>
+    line.replace('|', ',');
+    line.replace('<', ','); 
+    line.replace('>', ','); 
+    line.replace(':', ','); 
+    // ,Idle,MPos,5.529,0.560,WPos,1.529,-5.440,
+    // State ..
+    String state = getValue(line, ',', 1);
+    display.setCursor(XCHAR2PIX(0),YCHAR2PIX(0)); // letter, row
+    display.setTextSize(2); // Draw 2X-scale text
+    display.println(state);
+    display.setTextSize(1); // Draw 1X-scale text
+    // Machine position ...
+    int idx1 = line.indexOf("MPos");
+    if (idx1 >= 0)
+    {
+        String mpos = line.substring(idx1);
+        machinepos_x = getValue(mpos, ',', 1);
+        machinepos_y = getValue(mpos, ',', 2);
+    }
+    int idxPn = line.indexOf("Pn");
+    if (idxPn>=0)
+    {
+        String pns = line.substring(idxPn);
+        String lim = getValue(pns, ',', 1);
+        machinepos_x += lim == "X" ? "!" : "";
+        machinepos_y += lim == "Y" ? "!" : "";
+    }
+    // Working position ...
+    int idx2 = line.indexOf("WPos");
+    if (idx2 >= 0)
+    {
+        String wpos = line.substring(idx2);
+        workingpos_x = getValue(wpos, ',', 1);
+        workingpos_y = getValue(wpos, ',', 2);
+    }       
+    display.println(machinepos_x);
+    display.setCursor(XCHAR2PIX(0),YCHAR2PIX(2));    
+    display.println(machinepos_x);
+    display.setCursor(SCREEN_WIDTH/2,YCHAR2PIX(2));
+    display.println(machinepos_y);
+    display.setCursor(XCHAR2PIX(0),YCHAR2PIX(3));
+    display.println(workingpos_x);
+    display.setCursor(SCREEN_WIDTH/2,YCHAR2PIX(3));
+    display.println(workingpos_y);
+    display.setCursor(XCHAR2PIX(0),YCHAR2PIX(4));
+    display.println(lcd_comment.substring(0,15));
+}
+// Display format below
+// .                           .
+// | SPINDLE  TOOL  FEED       | 
+// | UNITS    MOVE  PLANE      | 
+// +----------------------------+
+void grbl_parse_state_line(String line)
+{
+   // [GC:G0 G54 G17 G21 G90 G94 M5 M9 T0 F0 S0]
+   line.replace("[","");
+   line.replace("]","");
+   line.replace("GC:","");
+   //             mm                  TNr Feed
+   // G0 G54 G17 G21 G90 G94 M0 M5 M9 T0  F500.000
+   String move = getValue(line, ' ', 0);
+   if(move == "G")  move = "RAP";
+   if(move == "G0") move = "RAP";
+   if(move == "G1") move = "LIN";
+   if(move == "G2") move = "CW ";
+   if(move == "G3") move = "CCW";
+   String plane = getValue(line, ' ', 2);
+   if     (plane == "G17") plane = "XY";
+   else if(plane == "G18") plane = "ZX";
+   else if(plane == "G19") plane = "YZ";
+   String mode = (getValue(line, ' ', 3) == "G21" ? "MM" : "INCH");
+   String spindle = (getValue(line, ' ', 7) == "M5" ? "1" : "0");
+   String toolnr = getValue(line, ' ', 9);
+   String feedrate = getValue(line, ' ', 10);
+   display.setTextSize(1); // Draw 1x-scale text
+   // Spindle
+   display.setCursor(XCHAR2PIX(0),YCHAR2PIX(6)); 
+   display.println("S" + spindle);
+   // Tool
+   display.setCursor(XCHAR2PIX(5),YCHAR2PIX(6));
+   display.println(toolnr);
+   // Feed
+   display.setCursor(XCHAR2PIX(10),YCHAR2PIX(6)); 
+   display.println(feedrate);
+   // mm or inch
+   display.setCursor(XCHAR2PIX(0),YCHAR2PIX(7));
+   display.println(mode);
+   // Move mode
+   display.setCursor(XCHAR2PIX(5),YCHAR2PIX(7));
+   display.println(move);
+   // Plane
+   display.setCursor(XCHAR2PIX(10),YCHAR2PIX(7));
+   display.println(plane);
+}
+// Analyze every line and choose an action
+void grbl_parse_line(String line)
+{
+    if (!is_ssd1306_initialized)
+        grbl_display_init();
+    if( line.indexOf('<') == 0 ){
+        line.replace("\r","");
+        grbl_parse_status_line(line);
+    }  
+    else if( line.indexOf('[') == 0 )  {
+        line.replace("\r","");
+        grbl_parse_state_line(line);
+    }        
+}
+
+
+void grbl_update_lcd() {
+    static int64_t next_update;
+    if (esp_timer_get_time() > next_update) {
+        next_update = esp_timer_get_time() + 500000;
+        if (!is_ssd1306_initialized)
+            grbl_display_init();
+        display.clearDisplay();
+        display.setTextColor(SSD1306_WHITE);  
+        report_realtime_status(CLIENT_LCD);
+        report_gcode_modes(CLIENT_LCD);
+        display.display();
+    }
+}
+
+#endif
+
 // this is a generic send function that everything should use, so interfaces could be added (Bluetooth, etc)
 void grbl_send(uint8_t client, const char* text) {
     if (client == CLIENT_INPUT) {
@@ -77,6 +258,10 @@ void grbl_send(uint8_t client, const char* text) {
 #endif
     if (client == CLIENT_SERIAL || client == CLIENT_ALL) {
         Serial.print(text);
+    }
+    if (client == CLIENT_LCD) {
+        String s(text);
+        grbl_parse_line(s);
     }
 }
 
@@ -860,6 +1045,9 @@ void report_realtime_steps() {
 }
 
 void report_gcode_comment(char* comment) {
+    #ifdef SSD1306
+        lcd_comment = comment;
+    #endif
     char          msg[80];
     const uint8_t offset = 4;  // ignore "MSG_" part of comment
     uint8_t       index  = offset;

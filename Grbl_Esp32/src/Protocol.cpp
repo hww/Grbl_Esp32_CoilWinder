@@ -112,6 +112,7 @@ void protocol_main_loop() {
         if (limits_get_state()) {
             sys.state = State::Alarm;  // Ensure alarm state is active.
             report_feedback_message(Message::CheckLimits);
+            grbl_update_lcd();
         }
     }
 #endif
@@ -121,6 +122,7 @@ void protocol_main_loop() {
     if (sys.state == State::Alarm || sys.state == State::Sleep) {
         report_feedback_message(Message::AlarmLock);
         sys.state = State::Alarm;  // Ensure alarm state is set.
+        grbl_update_lcd();
     } else {
         // Check if the safety door is open.
         sys.state = State::Idle;
@@ -130,6 +132,7 @@ void protocol_main_loop() {
         }
         // All systems go!
         system_execute_startup(line);  // Execute startup script.
+        grbl_update_lcd();
     }
     // ---------------------------------------------------------------------------------
     // Primary loop! Upon a system abort, this exits back to main() to reset the system.
@@ -137,6 +140,8 @@ void protocol_main_loop() {
     // ---------------------------------------------------------------------------------
     uint8_t c;
     for (;;) {
+        grbl_update_lcd();
+
 #ifdef ENABLE_SD_CARD
         if (SD_ready_next) {
             char fileLine[255];
