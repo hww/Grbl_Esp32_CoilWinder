@@ -1,12 +1,12 @@
 
 
-# Grbl (CNC Controller) For ESP32
+# CoilWider based on grbl for ESP32
 
 ### Branch Overview
 
 The coil winder based on _Grb_ESP32_. There is additional _coilwinder_ machine added with settings for two step motors with 6600 drivers. The file Report.cpp contains a bit clucky SSD1306 code for displaying CNC status.
 
-<img src="https://github.com/hww/Grbl_Esp32_CoilWinder/blob/main/doc/oled_display.jpg" width="500">
+<img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/oled_display.jpg" width="500">
 
 The _coilgen_ folder cotains a python script for generating gcode from a coil's params.
 
