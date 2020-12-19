@@ -1,6 +1,6 @@
 
 
-# CoilWider based on grbl for ESP32
+# CoilWinder based on grbl for ESP32
 
 ### Branch Overview
 
