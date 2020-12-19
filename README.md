@@ -10,7 +10,7 @@ The coil winder based on _Grb_ESP32_. There is additional _coilwinder_ machine a
 
 The _coilgen_ folder cotains a python script for generating gcode from a coil's params.
 
-### Project Overview
+### Grbl Project Overview
 
 Grbl_ESP32 started as a port of [Grbl](https://github.com/gnea/grbl) to the ESP32. The power of the ESP32 has allowed this firmware to grow far beyond the limitations of 8-bit AVR controllers. Here are some of the current features
 
