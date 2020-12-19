@@ -6,13 +6,13 @@
 
 The coil winder based on _Grb_ESP32_. There is additional _coilwinder_ machine added with settings for two step motors with 6600 drivers. The file Report.cpp contains a bit clucky SSD1306 code for displaying CNC status.
 
-<img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/oled_display.jpg" width="500">
+<img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/oled_display.jpg" width="300">
 
 The _coilgen_ folder cotains a python script for generating gcode from a coil's params.
 
 ### Project Overview
 
-<img src="https://user-images.githubusercontent.com/189677/93836185-74c27500-fc47-11ea-8bed-5d419974c196.jpg" width="500">
+<img src="https://user-images.githubusercontent.com/189677/93836185-74c27500-fc47-11ea-8bed-5d419974c196.jpg" width="300">
 
 Grbl_ESP32 started as a port of [Grbl](https://github.com/gnea/grbl) to the ESP32. The power of the ESP32 has allowed this firmware to grow far beyond the limitations of 8-bit AVR controllers. Here are some of the current features
 
