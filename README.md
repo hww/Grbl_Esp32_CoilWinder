@@ -12,8 +12,7 @@ Changes from the original Grbl firmware:
 
 - coilwinder.h machine configuration with settings for two stepper motors.
 
-- Report.cpp changed to support a (clunky) driver for an SSD1306 OLED display. The display shows the cur
-rent CNC status, as in the image below:
+- Report.cpp changed to support a (clunky) driver for an SSD1306 OLED display. The display shows the current CNC status, as in the image below:
 
 <img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/oled_display.jpg" width="300">
 
