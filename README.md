@@ -5,8 +5,7 @@
 
 This project implements a coil winding machine with an ESP32 SoC and two stepper motors.
 
-The coil winder software is based on the Grbl [Grbl_ESP32](https://github.com/bdring/Grbl_Esp32) firmware.
-
+The coil winder software is based on the Grbl [Grbl_ESP32](https://github.com/bdring/Grbl_Esp32) firmware and [Coilwinder](https://github.com/hoeken/Coilwinder) software.
 
 Changes from the original Grbl firmware:
 
@@ -19,7 +18,7 @@ Changes from the original Grbl firmware:
 The coilgen folder contains a Python script to generage gcode from a coil's parameters. The gcode file
  includes a comment with the coil's turn and layer counts. This comment will be displayed on the OLED display.
 
-The Grbl project provided a useful base to build upon. Thanks to Bdring for posting it!
+The Grbl project provided a useful base to build upon. Thanks to Bdring for posting it! Thanks to Zach Hoeken for posting his python script.
 
 
 
