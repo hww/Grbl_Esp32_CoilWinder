@@ -121,7 +121,9 @@
 // Common enable for all steppers.  If it is okay to leave
 // your drivers enabled at all times, you can leave
 // STEPPERS_DISABLE_PIN undefined and use the pin for something else.
-// #define STEPPERS_DISABLE_PIN    GPIO_NUM_13
+#define STEPPERS_DISABLE_PIN    GPIO_NUM_4
+// Invert yje STEPPER_ENABLE_PIN
+//#define DEFAULT_INVERT_ST_ENABLE 1
 
 // Pins for controlling various aspects of the machine.  If your
 // machine does not support one of these features, you can leave
