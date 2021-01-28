@@ -21,6 +21,7 @@ The coilgen folder contains a Python script to generage gcode from a coil's para
 The Grbl project provided a useful base to build upon. Thanks to Bdring for posting it! Thanks to Zach Hoeken for posting his python script.
 
 
+<img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/coil_winder_photo_1.jpg" width="300">
 
 
         
