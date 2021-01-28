@@ -26,6 +26,7 @@ The Grbl project provided a useful base to build upon. Thanks to Bdring for post
 
 # ESP32 GPIO Functions   
 
+The table below shows GPIO's functions.
 
 | GPIO | Function |
 |--------|--------------------------|
