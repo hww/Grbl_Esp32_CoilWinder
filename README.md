@@ -26,7 +26,8 @@ The Grbl project provided a useful base to build upon. Thanks to Bdring for post
 
 # ESP32 GPIO Functions       
 
-+--------+--------------------------+
+| GPIO | Function |
+|--------|--------------------------|
 | GPIO02 | LED |
 | GPIO04 | Motor enable (active HI) |
 | GPIO16 | Quad encoder A |
