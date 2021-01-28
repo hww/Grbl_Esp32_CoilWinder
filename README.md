@@ -24,14 +24,15 @@ The Grbl project provided a useful base to build upon. Thanks to Bdring for post
 <img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/coil_winder_photo_1.jpg" width="900">
 
 
-# ESP32 GPIO Functions       
+# ESP32 GPIO Functions   
+
 
 | GPIO | Function |
 |--------|--------------------------|
-| GPIO02 | LED |
+| GPIO02 | LED (1) |
 | GPIO04 | Motor enable (active HI) |
-| GPIO16 | Quad encoder A |
-| GPIO17 | Quad encoder B |
+| GPIO16 | Quad encoder A (2) |
+| GPIO17 | Quad encoder B (2) |
 | GPIO05 | SDCARD CS |
 | GPIO18 | SDCARD SCK |
 | GPIO19 | SDCARD MISO |
@@ -43,9 +44,12 @@ The Grbl project provided a useful base to build upon. Thanks to Bdring for post
 | GPIO26 | DIR X (active HI) |
 | GPIO25 | STEP X (active HI) |
 | GPIO33 | BUTTON B |
-| GPIO32 | BUTTON A (Quad encoder's button) |
+| GPIO32 | BUTTON A (Quad encoder's button) (2) |
 | GPIO35 | LIMIT X SWITCHER |
 
+(1) The LED on the ESP32 starter kid board
+
+(2) The quad encoder is not suported yed by the firmware. 
         
         
         
