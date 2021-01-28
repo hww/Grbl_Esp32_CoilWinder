@@ -26,24 +26,24 @@ The Grbl project provided a useful base to build upon. Thanks to Bdring for post
 
 # ESP32 GPIO Functions       
 
-|--------|--------------------------
-| GPIO02 | LED
-| GPIO04 | Motor enable (active HI)
-| GPIO16 | Quad encoder A
-| GPIO17 | Quad encoder B
-| GPIO05 | SDCARD CS
-| GPIO18 | SDCARD SCK
-| GPIO19 | SDCARD MISO
-| GPIO21 | OLED SDA
-| GPIO22 | OLED SCK
-| GPIO23 | SDCARD MOSI
-| GPIO14 | DIR Y (active HI)
-| GPIO27 | STEP Y (active HI)
-| GPIO26 | DIR X (active HI)
-| GPIO25 | STEP X (active HI)
-| GPIO33 | BUTTON B
-| GPIO32 | BUTTON A (Quad encoder's button)
-| GPIO35 | LIMIT X SWITCHER
+|--------|--------------------------|
+| GPIO02 | LED |
+| GPIO04 | Motor enable (active HI) |
+| GPIO16 | Quad encoder A |
+| GPIO17 | Quad encoder B |
+| GPIO05 | SDCARD CS |
+| GPIO18 | SDCARD SCK |
+| GPIO19 | SDCARD MISO |
+| GPIO21 | OLED SDA |
+| GPIO22 | OLED SCK |
+| GPIO23 | SDCARD MOSI |
+| GPIO14 | DIR Y (active HI) |
+| GPIO27 | STEP Y (active HI) |
+| GPIO26 | DIR X (active HI) |
+| GPIO25 | STEP X (active HI) |
+| GPIO33 | BUTTON B |
+| GPIO32 | BUTTON A (Quad encoder's button) |
+| GPIO35 | LIMIT X SWITCHER |
 
         
         
