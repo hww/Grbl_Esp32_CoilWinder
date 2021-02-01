@@ -2,6 +2,11 @@
 // clang-format off
 
 /*
+ * HWW's coildwinder project from the github page
+ * https://github.com/hww/coil_winder_grbl_esp32
+*/
+
+/*
     template.h
     Part of Grbl_ESP32
 
@@ -90,31 +95,31 @@
 // 200 steps per 2mm for X axis
 #define DEFAULT_X_STEPS_PER_MM 400.0
 #define DEFAULT_X_MICROSTEPS 4
-#define DEFAULT_X_MAX_RATE 500.0  // mm/min
+#define DEFAULT_X_MAX_RATE 1000.0  // mm/min
 
 // 200 steps per 1 turn for X axis
 #define DEFAULT_Y_STEPS_PER_MM 800.0
 #define DEFAULT_Y_MICROSTEPS 4
-#define DEFAULT_Y_MAX_RATE 500.0  // mm/min
+#define DEFAULT_Y_MAX_RATE 1000.0  // mm/min
 
 // $130 mm NOTE: Must be a positive value.
 #define DEFAULT_X_MAX_TRAVEL 300.0
 // mm (1mm is i turn of coil ) NOTE: Must be a positive value.
-#define DEFAULT_Y_MAX_TRAVEL  10000.0
+//#define DEFAULT_Y_MAX_TRAVEL  10000.0
 // Homing settings
 #define DEFAULT_HOMING_ENABLE 1
 #define DEFAULT_X_HOMING_MPOS 0.0
 #define DEFAULT_Y_HOMING_MPOS 0.0
-#define DEFAULT_HARD_LIMIT_ENABLE 1
+#define DEFAULT_HARD_LIMIT_ENABLE 0
 #define DEFAULT_HOMING_CYCLE_0 bit(X_AXIS)
 #define DEFAULT_HOMING_CYCLE_1 0
-#define DEFAULT_HOMING_PULLOFF 5 // mm
+#define DEFAULT_HOMING_PULLOFF 1 // mm
 #define DEFAULT_HOMING_SEEK_RATE 300
 #define DEFAULT_HOMING_FEED_RATE 200
 #define DEFAULT_HOMING_DIR_MASK 3  // $23 move positive dir Z, negative X,Y
 
-#define X_LIMIT_PIN             GPIO_NUM_35
-// #define Y_LIMIT_PIN             GPIO_NUM_13
+//#define X_LIMIT_PIN             GPIO_NUM_35
+#define Y_LIMIT_PIN             GPIO_NUM_12
 // #define Z_LIMIT_PIN             GPIO_NUM_16
 #define DEFAULT_INVERT_LIMIT_PINS 0    // boolean
 

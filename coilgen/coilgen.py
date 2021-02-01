@@ -23,11 +23,13 @@ Generates GCode which will control your coil winding bot to make you coils!
 Usage: python gcoil-winder.py [options]
 
 Options:
-  -h, --help	show this help
-  --awg	the AWG of the wire you're winding.  we'll estimate your wire diameter based on this. default = 28
+  -h, --help    show this help
+  --awg         the AWG of the wire you're winding.  we'll estimate your wire wdiam based on this. default = 28
+  --wdiam       wirer's external wdiam (include insulation)
   --length	the length of the coil you'd like to make in millimeters. default = 25mm
-  --windings	the number of windings you would like. default = 1000
-  --rpm	the Z axis feedrate in mm/min.  default = 30
+  --turns   	the number of windings you would like. default = 1000
+  --rpm	        the Y axis feedrate in mm/min.  default = 30
+  --idiam       coil internal diameter
 """
 
 from math import *
@@ -36,9 +38,9 @@ import getopt
 
 class CoilWinder:
 	"Class to handle generating frosting code."
-	def __init__(self, awg, length, turns, rpm, diameter):
+	def __init__(self, awg, length, turns, rpm, wdiam, idiam):
 
-		self.diametersInMM = {
+		self.wdiamsInMM = {
 			14:	1.70053,
 			15:	1.51765,
 			16:	1.35636,
@@ -77,17 +79,28 @@ class CoilWinder:
 			49:	0.035179,
 			50:	0.032385
 		};
+
 		self.awg = awg;
 		self.length = length;
 		self.turns = turns;
 		self.rpm = rpm;
-		if (diameter == 0):
-			self.diameter = self.diametersInMM[self.awg];
-
-		self.turnsPerRow = round(self.length / self.diameter);
+		self.idiam = idiam;
+		self.wdiam = wdiam;
+		if (wdiam == 0.0):
+			self.wdiam = self.wdiamsInMM[self.awg];
+		else:
+			best_diff = 1000
+			best_awg = 0
+			for awg_, dia_ in self.wdiamsInMM.items():
+				diff = abs(dia_ - self.wdiam);
+				if (diff < best_diff):
+					best_diff = diff;
+					best_awg = awg_;
+			self.awg = best_awg;
+		self.turnsPerRow = floor(self.length / self.wdiam);
 		self.maxTurns = self.turnsPerRow * ceil(self.turns / self.turnsPerRow);
 		self.minTurns = self.turnsPerRow * floor(self.turns / self.turnsPerRow);
-
+		self.layers = ceil(self.turns / self.turnsPerRow);
 
 	def generate(self):
 		direction = 1;
@@ -101,11 +114,14 @@ class CoilWinder:
 		print("(Args:", " ".join(sys.argv), ")");
 		print("(Units: X mm, Y rotations)");
 		print("(Feed rate RPM: %0.2f)" % (self.rpm));
-		print("(Coil Length: %0.2fmm)" % (self.turnsPerRow * self.diameter));
+		print("(Coil Length: %0.2fmm)" % (self.turnsPerRow * self.wdiam));
 		print("(Wire AWG: %d)" % (self.awg));
-		print("(Wire Diameter: %.3fmm)" % (self.diameter));
+		print("(Wire Wdiam: %.3fmm)" % (self.wdiam));
 		print("(Total Windings: %d)" % (self.turns));
 		print("(Turns per layer: %d)" % (self.turnsPerRow));
+		print("(Layers: %d)" % (self.layers));
+		print("(Coil internal diameter %.3fmm)" % (self.idiam));
+		print("(Coil external diameter %.3fmm)" % (self.idiam + self.layers * self.wdiam * 2.0));
 
 		if (self.minTurns == self.maxTurns):
 			if (self.minTurns % 2 == 0):
@@ -116,30 +132,28 @@ class CoilWinder:
 			print("(Warning: winding will stop in the middle of the coil.)");
 			if (self.minTurns % 2 == 0):
 				print("(Smaller: %d, %d layers, start/stop on same end.)" % (self.minTurns, self.minTurns / self.turnsPerRow))
-				print("(Larger: %d, %d layers, start/stop on opposite ends.)" % (self.maxTurns, self.maxTurns / self.turnsPerRow))
+				print("(Larger: %d, %d layers, start/stop on oppposite ends.)" % (self.maxTurns, self.maxTurns / self.turnsPerRow))
 			else:
 				print("(Smaller: %d, %d layers, start/stop on opposite ends.)" % (self.minTurns, self.minTurns / self.turnsPerRow))
 				print("(Larger: %d, %d layers, start/stop on same end.)" % (self.maxTurns, self.maxTurns / self.turnsPerRow))
 		print("G21 (metric ftw)");
 		print("G90 (absolute mode)");
-		print("G92 X0 Y0 Z0 (zero all axes)");
+		print("G92 X0 Y0 (zero all axes)");
 
 		for i in range(self.turns):
 
-			if (posx > self.length):
-				direction = 0;
-				layer+=1;
-			elif (posx <= 0):
-				direction = 1;
+			if (direction == 1):
+				posx += self.wdiam;
+			else:
+				posx -= self.wdiam;
+			print("G1 X%.3f Y%d F%.2f" % (posx, i+1, self.rpm))
+			# display current turn and layer on LCD
+			print("(T: %d L: %d)" % (i+1, layer))
+
+			if ((i+1) % self.turnsPerRow == 0):
+				direction = direction ^ 1;
 				layer+=1;
 
-			if (direction == 1):
-				posx += self.diameter;
-			else:
-				posx -= self.diameter;
-			# display current turn and layer on LCD
-			print("(T: %d L: %d)" % (i, layer))
-			print("G1 X%.3f Y%d F%.2f" % (posx, i+1, self.rpm))
 
 		print("M18 (drives off)")
 		print("M127")
@@ -152,8 +166,10 @@ def main(argv):
 			'help',
 			'awg=',
 			'length=',
-			'windings=',
+			'turns=',
 			'rpm=',
+			'wdiam=',
+			'idiam='
 		])
 	except getopt.GetoptError:
 		usage()
@@ -162,25 +178,28 @@ def main(argv):
 	awg = 24;
 	length = 10.0;
 	turns = 100;
-	rpm = 120.0;
-	diameter = 0.0;
+	rpm = 30.0;
+	wdiam = 0.0;
+	idiam = 5.0;
 
 	for opt, arg in opts:
 		if opt in ("-h", "--help"):
 			usage()
 			sys.exit()
-		elif opt in ("--awg"):
-			awg = int(arg)
-		elif opt in ("--diameter"):
-			diameter = int(arg)
-		elif opt in ("--length"):
+		else:
+			if opt in ("--awg"):
+				awg = int(arg)
+			elif opt in ("--wdiam"):
+				wdiam = float(arg)
+		if opt in ("--length"):
 			length = float(arg)
-		elif opt in ("--turns"):
+		if opt in ("--turns"):
 			turns = int(arg)
-		elif opt in ("--rpm"):
+		if opt in ("--rpm"):
 			rpm = float(arg)
-
-	winder = CoilWinder(awg, length, turns, rpm, diameter)
+		if opt in ("--idiam"):
+			idiam = float(arg)
+	winder = CoilWinder(awg, length, turns, rpm, wdiam, idiam)
 	winder.generate()
 
 def usage():

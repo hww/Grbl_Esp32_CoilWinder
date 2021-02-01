@@ -96,8 +96,8 @@ const int MAX_N_AXIS = 6;
 #define BAUD_RATE 115200
 
 //Connect to your local AP with these credentials
-#define CONNECT_TO_SSID  ""
-#define SSID_PASSWORD  ""
+//#define CONNECT_TO_SSID  "your SSID"
+//#define SSID_PASSWORD  "your SSID password"
 //CONFIGURE_EYECATCH_BEGIN (DO NOT MODIFY THIS LINE)
 #define ENABLE_BLUETOOTH  // enable bluetooth
 
@@ -205,7 +205,7 @@ enum class Cmd : uint8_t {
 // If homing is enabled, homing init lock sets Grbl into an alarm state upon power up. This forces
 // the user to perform the homing cycle (or override the locks) before doing anything else. This is
 // mainly a safety feature to remind the user to home, since position is unknown to Grbl.
-//#define HOMING_INIT_LOCK  // Comment to disable
+#define HOMING_INIT_LOCK  // Comment to disable
 
 // Number of homing cycles performed after when the machine initially jogs to limit switches.
 // This help in preventing overshoot and should improve repeatability. This value should be one or
@@ -237,7 +237,7 @@ static const uint8_t NHomingLocateCycle = 1;  // Integer (1-128)
 // alarm out and force the user to manually disengage the limit switch. Otherwise, if you have one
 // limit switch for each axis, don't enable this option. By keeping it disabled, you can perform a
 // homing cycle while on the limit switch and not have to move the machine off of it.
-#define LIMITS_TWO_SWITCHES_ON_AXES
+// #define LIMITS_TWO_SWITCHES_ON_AXES
 
 // Allows GRBL to track and report gcode line numbers.  Enabling this means that the planning buffer
 // goes from 16 to 15 to make room for the additional line number data in the plan_block_t struct
