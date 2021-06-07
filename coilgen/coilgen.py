@@ -79,7 +79,7 @@ class CoilWinder:
 			49:	0.035179,
 			50:	0.032385
 		};
-
+		self.method = 1;
 		self.awg = awg;
 		self.length = length;
 		self.turns = turns;
@@ -140,23 +140,67 @@ class CoilWinder:
 		print("G90 (absolute mode)");
 		print("G92 X0 Y0 (zero all axes)");
 
+		the_first_row = 1;
+
 		for i in range(self.turns):
 
+			is_first = ((i) % self.turnsPerRow == 0);
+			is_last = ((i+1) % self.turnsPerRow == 0);
+			use_rpm = self.rpm;
+			if (is_first or is_last):
+				use_rpm *= 0.1;
+
+			prevx = posx;
 			if (direction == 1):
 				posx += self.wdiam;
 			else:
 				posx -= self.wdiam;
-			print("G1 X%.3f Y%d F%.2f" % (posx, i+1, self.rpm))
-			# display current turn and layer on LCD
-			print("(T: %d L: %d)" % (i+1, layer))
 
-			if ((i+1) % self.turnsPerRow == 0):
-				direction = direction ^ 1;
-				layer+=1;
+			if (self.method == 1):
+				# strait fraction of turn
+				frac1 = 0.8
+				# angular fraction of turn
+				frac2 = 1.0 - frac1
+				# turn pitch
+				stepx = posx - prevx
+				# straight len
+				dist1 = frac1
+				# turned len
+				dist2 = sqrt(stepx * stepx + frac2 * frac2)
+				ratio = dist1 / dist2
 
+				# display current turn and layer on LCD
+				print("(T: %d L: %d)" % (i+1, layer))
+				# Make direct part of turn
+				print("G1 X%.3f Y%.3f F%.2f" % (prevx, i+frac1, use_rpm))
 
-		print("M18 (drives off)")
-		print("M127")
+				# Check if last turn of the coil
+				if (is_last):
+					# Complete turn straght
+					print("G1 X%.3f Y%.3f F%.2f" % (prevx,  i+1,    use_rpm))
+					# Change direction
+					direction = direction ^ 1;
+					layer+=1;
+					posx = prevx;
+					# Pause
+					if (the_first_row == 1):
+						print("M0 (pause)");
+						the_first_row = 0;
+				else:
+					# Complete turn curved
+					print("G1 X%.3f Y%.3f F%.2f" % (posx,  i+1,    use_rpm * ratio))
+			else:
+				print("G1 X%.3f Y%d F%.2f" % (posx, i+1, use_rpm))
+				# display current turn and layer on LCD
+				print("(T: %d L: %d)" % (i+1, layer))
+
+				if ((i+1) % self.turnsPerRow == 0):
+					direction = direction ^ 1;
+					layer+=1;
+					print("M0 (pause)");
+		print("(Complete!)")
+		#print("M18 (drives off)")
+		#print("M127")
 
 
 def main(argv):
