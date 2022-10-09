@@ -1,7 +1,4 @@
-
-
 # CoilWinder based on grbl for ESP32
-
 
 This project implements a coil winding machine with an ESP32 SoC and two stepper motors.
 
@@ -23,6 +20,9 @@ The Grbl project provided a useful base to build upon. Thanks to Bdring for post
 
 <img src="https://github.com/hww/coil_winder_grbl_esp32/blob/main/doc/coil_winder_photo_1.jpg" width="900">
 
+# The conclusion
+
+I found GRBL ways is mostly not workable. Because the program asume how many turns will fit. But in reality happens "surprises". So i decided to make my custom firmware [DIY Coil Winder on ESP32](https://github.com/hww/coilwinder_esp32)
 
 # ESP32 GPIO Functions   
 
