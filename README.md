@@ -1,4 +1,4 @@
-# CoilWinder based on grbl for ESP32
+# GRBL based the coil winder with ESP32
 
 This project implements a coil winding machine with an ESP32 SoC and two stepper motors.
 
